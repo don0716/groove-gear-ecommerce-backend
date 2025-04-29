@@ -239,6 +239,54 @@ app.post("/api/users/:userId/cart", async (req, res) => {
   }
 });
 
+// Route to update the quantity of a product in the cart
+app.patch("/api/users/:userId/cart/increase/:productId", async (req, res) => {
+  try {
+    const { quantity } = req.body;
+    const user = await User.findById(req.params.userId);
+    const product = user.cart.find(
+      (item) => item.product.toString() === req.params.productId
+    );
+    if (!product) {
+      return res.status(404).json({ error: "Product not found in cart. " });
+    } else {
+      product.quantity += 1;
+      await user.save();
+      res
+        .status(200)
+        .json({ message: "Product quantity updated", cart: user.cart });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Decrease product quantity by 1.
+app.patch("/api/users/:userId/cart/decrease/:productId", async (req, res) => {
+  try {
+    const { quantity } = req.body;
+    const user = await User.findById(req.params.userId);
+    const product = user.cart.find(
+      (item) => item.product.toString() === req.params.productId
+    );
+    if (!product) {
+      return res.status(404).json({ error: "Product not found in cart. " });
+    } else if (product.quantity > 1) {
+      product.quantity -= 1;
+      await user.save();
+      res
+        .status(200)
+        .json({ message: "Product quantity updated", cart: user.cart });
+    } else {
+      return res
+        .status(404)
+        .json({ error: "Product quantity can't be less than 1." });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Delete products from Cart.
 app.delete("/api/users/:userId/cart/:productId", async (req, res) => {
   try {
