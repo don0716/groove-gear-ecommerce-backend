@@ -227,7 +227,8 @@ app.post("/api/users/:userId/cart", async (req, res) => {
     );
 
     if (existingProduct) {
-      existingProduct.quantity += quantity;
+      // existingProduct.quantity += quantity;
+      res.status(400).json({ message: "Product Already Exists in Cart." });
     } else {
       user.cart.push({ product: productId, quantity });
     }
