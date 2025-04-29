@@ -250,11 +250,14 @@ app.patch("/api/users/:userId/cart/increase/:productId", async (req, res) => {
     if (!product) {
       return res.status(404).json({ error: "Product not found in cart. " });
     } else {
-      product.quantity += 1;
+      product.quantity += quantity;
       await user.save();
+      const updatedUser = await User.findById(req.params.userId).populate(
+        "cart.product"
+      );
       res
         .status(200)
-        .json({ message: "Product quantity updated", cart: user.cart });
+        .json({ message: "Product quantity updated", cart: updatedUser.cart });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -272,11 +275,14 @@ app.patch("/api/users/:userId/cart/decrease/:productId", async (req, res) => {
     if (!product) {
       return res.status(404).json({ error: "Product not found in cart. " });
     } else if (product.quantity > 1) {
-      product.quantity -= 1;
+      product.quantity -= quantity;
       await user.save();
+      const updatedUser = await User.findById(req.params.userId).populate(
+        "cart.product"
+      );
       res
         .status(200)
-        .json({ message: "Product quantity updated", cart: user.cart });
+        .json({ message: "Product quantity updated", cart: updatedUser.cart });
     } else {
       return res
         .status(404)
