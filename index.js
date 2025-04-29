@@ -308,6 +308,18 @@ app.delete("/api/users/:userId/cart/:productId", async (req, res) => {
   }
 });
 
+// Delete All Products from Cart.
+app.delete("/api/users/:userId/cart", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    user.cart = [];
+    await user.save();
+    res.status(200).json({ message: "All Products Removed from Cart" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Add New Address
 app.post("/api/users/:userId/address", async (req, res) => {
   try {
