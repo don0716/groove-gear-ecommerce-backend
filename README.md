@@ -233,11 +233,5 @@ Sample Response:
 - **PATCH `/api/users/:userId/default-address`** — Set default address
 - **DELETE `/api/users/:userId/address/:addressId`** — Remove address
 
----
 
-### Non-Functional
-- CORS enabled (`origin: *`, `credentials: true`)
-- `.env` configuration for MongoDB connection
-
----
 
