@@ -1,81 +1,243 @@
 ## Groove Gear - Backend
 
 ---
+
 ### API REFERENCE
+
+---
+
 ### PRODUCTS
-### **POST /products**<br>
-Create a product<br>
-Sample Response:<br>
+
+### **POST /api/products**  
+Create a product.  
+Sample Response:  
 ```
-{_id, name, type, category, rating, brand, price, available, imageUrl, description}
+{_id, name, type, category, brand, price, rating, available, imageUrl, description}
 ```
-### **GET /products**<br>
-Get all products<br>
-Sample Response:<br>
+
+### **GET /api/products**  
+Get all products.  
+Sample Response:  
 ```
-{_id, name, type, category, rating, brand, price, available, imageUrl, description}
+[{_id, name, type, category, brand, price, rating, available, imageUrl, description}]
 ```
-### **GET /products/:id**<br>
-Get a product.<br>
-Sample Response:<br>
+
+### **GET /api/products/:productId**  
+Get a product by ID.  
+Sample Response:  
 ```
-{_id, name, type, category, rating, brand, price, available, imageUrl, description}
+{_id, name, type, category, brand, price, rating, available, imageUrl, description}
 ```
+
+---
+
 ### CATEGORIES
-### **GET /categories**<br>
-Get all categories.<br>
-Sample Response:<br>
+
+### **GET /api/categories**  
+Get all categories.  
+Sample Response:  
+```
+[{_id, name}]
+```
+
+### **GET /api/categories/:categoryId**  
+Get one category by ID.  
+Sample Response:  
 ```
 {_id, name}
 ```
-### **GET /categories/:id**<br>
-Get one category.<br>
-Sample Response:<br>
-```
-{_id, name}
-```
+
+---
+
 ### USERS
-### **GET /users**<br>
-Get all users.<br>
-Sample Response:<br>
+
+### **GET /api/users**  
+Get all users.  
+Sample Response:  
 ```
-{_id, name, email, password, wishList, cart, addresses, defaultAddressId}
+[{_id, name, email, password, wishList, cart, addresses, defaultAddressId}]
 ```
-### **POST /users/register**<br>
-Get all users.<br>
-Sample Response:<br>
+
+### **POST /api/users/register**  
+Register a new user.  
+Sample Response:  
 ```
 {_id, name, email, password}
 ```
-### **POST /users/:id/wishlist**<br>
-Add product Id to wishlist.<br>
-Sample Response:<br>
+
+---
+
+### WISHLIST
+
+### **POST /api/users/:userId/wishlist**  
+Add product ID to wishlist.  
+Sample Response:  
 ```
 {wishList}
 ```
-### **GET /users/:id/wishlist**<br>
-Get all products from wishlist of selected user.<br>
-Sample Response:<br>
+
+### **GET /api/users/:userId/wishList**  
+Get all products from wishlist of selected user.  
+Sample Response:  
 ```
 {message, wishList}
 ```
-### **DELETE /users/:id/wishlist/:product-id**<br>
-Delete product from wishlist.<br>
-Sample Response:<br>
+
+### **DELETE /api/users/:userId/wishlist/:productId**  
+Delete product from wishlist.  
+Sample Response:  
 ```
 {message, wishList}
 ```
-### **GET /users/:id/cart**<br>
-Get all products from cart of selected user.<br>
-Sample Response:<br>
+
+---
+
+### CART
+
+### **GET /api/users/:userId/cart**  
+Get all products from cart of selected user.  
+Sample Response:  
 ```
 {message, cart}
 ```
-### **POST /users/:id/cart**<br>
-Add product id to cart of selected user.<br>
-Sample Response:<br>
+
+### **POST /api/users/:userId/cart**  
+Add product ID to cart of selected user.  
+Sample Response:  
 ```
-{product, quantity}
+{cart: [{product, quantity}]}
 ```
 
+### **PATCH /api/users/:userId/cart/increase/:productId**  
+Increase quantity of product in cart.  
+Sample Response:  
+```
+{message, cart}
+```
+
+### **PATCH /api/users/:userId/cart/decrease/:productId**  
+Decrease quantity of product in cart.  
+Sample Response:  
+```
+{message, cart}
+```
+
+### **DELETE /api/users/:userId/cart/:productId**  
+Remove product from cart.  
+Sample Response:  
+```
+{message, cart}
+```
+
+### **DELETE /api/users/:userId/cart**  
+Clear all products from cart.  
+Sample Response:  
+```
+{message}
+```
+
+---
+
+### ADDRESSES
+
+### **POST /api/users/:userId/address**  
+Add new address for user.  
+Sample Response:  
+```
+{message, addresses}
+```
+
+### **GET /api/users/:userId/address**  
+Get all addresses of user.  
+Sample Response:  
+```
+{message, addresses}
+```
+
+### **PATCH /api/users/:userId/default-address**  
+Set default address.  
+Sample Response:  
+```
+{message, defaultAddress, user}
+```
+
+### **DELETE /api/users/:userId/address/:addressId**  
+Delete specific address.  
+Sample Response:  
+```
+{message, addresses}
+```
+
+##  Groove Gear - PRD Checklist
+
+###  Product Models
+#### Category
+- `name` (String, required, unique)
+
+#### Instrument (Product)
+- `name` (String, required)
+- `type` (String, required)
+- `category` (ObjectId reference to Category, required)
+- `brand` (String)
+- `price` (Number)
+- `rating` (Number, 0–5)
+- `available` (Boolean, default: true)
+- `imageUrl` (String)
+- `description` (String)
+
+#### User
+- `name` (String, required)
+- `email` (String, required, unique)
+- `password` (String, required, unique)
+- `wishList` (Array of Instrument ObjectIds)
+- `cart` (Array of cart items)
+  - `product` (ObjectId reference to Instrument, required)
+  - `quantity` (Number, min: 1, max: 10)
+- `addresses` (Array of addresses)
+  - `name`, `street`, `city`, `state`, `pincode`, `phone`
+- `defaultAddressId` (ObjectId of selected address)
+
+---
+
+###  Backend Features
+
+#### Products
+- **POST `/api/products`** — Create a product
+- **GET `/api/products`** — Get all products
+- **GET `/api/products/:productId`** — Get product by ID
+
+#### Categories
+- **GET `/api/categories`** — Get all categories
+- **GET `/api/categories/:categoryId`** — Get category by ID
+
+#### Users
+- **POST `/api/users/register`** — Register a user
+- **GET `/api/users`** — Get all users
+
+####  Wishlist
+- **GET `/api/users/:userId/wishList`** — Get user’s wishlist
+- **POST `/api/users/:userId/wishlist`** — Add to wishlist
+- **DELETE `/api/users/:userId/wishlist/:productId`** — Remove from wishlist
+
+#### Cart
+- **GET `/api/users/:userId/cart`** — Get cart items
+- **POST `/api/users/:userId/cart`** — Add to cart
+- **PATCH `/api/users/:userId/cart/increase/:productId`** — Increase quantity
+- **PATCH `/api/users/:userId/cart/decrease/:productId`** — Decrease quantity
+- **DELETE `/api/users/:userId/cart/:productId`** — Remove item from cart
+- **DELETE `/api/users/:userId/cart`** — Clear cart
+
+#### Addresses
+- **POST `/api/users/:userId/address`** — Add address
+- **GET `/api/users/:userId/address`** — Get all addresses
+- **PATCH `/api/users/:userId/default-address`** — Set default address
+- **DELETE `/api/users/:userId/address/:addressId`** — Remove address
+
+---
+
+### Non-Functional
+- CORS enabled (`origin: *`, `credentials: true`)
+- `.env` configuration for MongoDB connection
+
+---
 
